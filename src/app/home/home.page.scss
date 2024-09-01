@@ -4,12 +4,14 @@ ion-content {
   --padding-end: 0;
   --padding-top: 0;
   --padding-bottom: 0;
+  overflow-y: scroll;
 }
 
 .content-container {
   display: flex;
   height: 100%;
   width: 100%;
+  padding-top: 3.5rem;
 }
 
 .sideBar {
@@ -20,4 +22,30 @@ ion-content {
 .threads{
   width: 17rem;
   height: 100%;
+}
+
+ion-toolbar {
+  --background: #333333;
+  --color: #ffffff; // Changed to white for better contrast
+}
+
+.sign-in-button {
+  --background: #ffffff;
+  --color: #000000;
+  --border-radius: 20px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-right: 16px; // Add right margin to create space from the edge
+
+  &:hover {
+    --background: #f0f0f0;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    --background: #e0e0e0;
+    transform: scale(0.95);
+  }
 }

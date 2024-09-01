@@ -1,0 +1,40 @@
+<div class="sign-up-container">
+  <h2 class="title">{{ isSignUp ? 'Sign Up' : 'Sign In' }}</h2>
+  
+  <div class="toggle-container">
+    <p>{{ isSignUp ? 'Already have an account?' : 'Need an account?' }}</p>
+    <button (click)="toggleSignUp()" class="btn btn-link">{{ isSignUp ? 'Sign In' : 'Sign Up' }}</button>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="sign-up-form">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" [(ngModel)]="email" name="email" required class="black-text">
+    </div>
+    
+    <div class="form-group password-group">
+      <label for="password">Password:</label>
+      <input [type]="showPassword ? 'text' : 'password'" id="password" [(ngModel)]="password" name="password" required class="black-text">
+      <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+        <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+      </button>
+    </div>
+    
+    <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+      {{ isSignUp ? 'Sign Up' : 'Sign In' }} with Email
+    </button>
+  </form>
+  
+  <div class="divider">
+    <span>or</span>
+  </div>
+
+  <div class="google-signup-container">
+    <button (click)="signInWithGoogle()" class="btn btn-google" [disabled]="isLoading">
+      <img src="assets/Google.svg" alt="Google Icon">
+      <span>Sign In with Google</span>
+    </button>
+  </div>
+
+  <ion-spinner *ngIf="isLoading" name="circles"></ion-spinner>
+</div>

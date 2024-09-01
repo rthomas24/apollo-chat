@@ -1,17 +1,26 @@
 import { createReducer, on } from "@ngrx/store";
-import { setActiveTool } from "./chat.actions";
+import { setActiveTool, signUserIn } from "./chat.actions";
+import { UserProfile } from "../components/sign-up/sign-up.component";
 
 
 export const chatFeatureKey = 'chat-key';
 
 export interface ChatState {
     currentSelectedTool: string,
-    threadHistory: ThreadHistory[]
+    threadHistory: ThreadHistory[],
+    userProfile: UserProfile
 }
 
 const initialState: ChatState = {
     currentSelectedTool: 'wikipedia',
-    threadHistory: []
+    threadHistory: [],
+    userProfile: {
+        displayName: "",
+        email: "",
+        emailVerified: false,
+        phoneNumber: null,
+        refreshToken: ""
+    }
 };
 
 export const chatReducer = createReducer(
@@ -20,6 +29,12 @@ export const chatReducer = createReducer(
         return {
             ...state,
             currentSelectedTool: tool,
+        };
+    }),
+    on(signUserIn, (state: ChatState, { user }) => {
+        return {
+            ...state,
+            userProfile: user,
         };
     }),
 )

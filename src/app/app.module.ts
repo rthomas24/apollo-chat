@@ -10,6 +10,7 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { chatFeatureKey, chatReducer } from './events/chat.reducer';
 import { ApolloEffects } from './events/chat.effects';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +18,7 @@ import { ApolloEffects } from './events/chat.effects';
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    FormsModule,
     StoreModule.forRoot({}, {}),
     StoreModule.forFeature(chatFeatureKey, chatReducer),
     EffectsModule.forRoot([ApolloEffects]),
