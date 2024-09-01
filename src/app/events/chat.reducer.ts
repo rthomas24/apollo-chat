@@ -5,11 +5,13 @@ import { setActiveTool } from "./chat.actions";
 export const chatFeatureKey = 'chat-key';
 
 export interface ChatState {
-    currentSelectedTool: string
+    currentSelectedTool: string,
+    threadHistory: ThreadHistory[]
 }
 
 const initialState: ChatState = {
-    currentSelectedTool: 'wikipedia'
+    currentSelectedTool: 'wikipedia',
+    threadHistory: []
 };
 
 export const chatReducer = createReducer(
@@ -21,3 +23,10 @@ export const chatReducer = createReducer(
         };
     }),
 )
+
+
+export interface ThreadHistory {
+    id: string
+    title: string
+    avatar: string
+}

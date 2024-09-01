@@ -1,1 +1,21 @@
-<p>threads works!</p>
+<ion-content class="ion-padding">
+  <ion-grid class="ion-no-padding">
+    <ion-row>
+      <ion-col size="12" class="sidebar">
+        <ion-searchbar placeholder="Search threads" (ionInput)="searchThreads($event)"></ion-searchbar>
+        <ion-list lines="none">
+          <ion-item class="new-thread-item" (click)="createNewThread()">
+            <ion-label>Create new thread</ion-label>
+            <img src="assets/add.svg" alt="Add new thread" class="add-icon" slot="end">
+          </ion-item>
+          <ion-item *ngFor="let thread of filteredThreads" (click)="selectThread(thread)" [class.selected]="thread === selectedThread">
+            <div class="avatar-container" slot="start">
+              <img [src]="thread.avatar" alt="Thread avatar" class="thread-icon">
+            </div>
+            <ion-label>{{ thread.title }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
