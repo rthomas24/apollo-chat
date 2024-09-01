@@ -1,0 +1,56 @@
+.sideBarContainer {
+  height: 100%;
+  background-color: #333333;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+ion-list {
+  background-color: transparent;
+  --ion-background-color: transparent;
+}
+
+ion-item {
+  --background: transparent;
+  --ion-background-color: transparent;
+  --ion-item-background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --min-height: 64px;
+  cursor: pointer;
+}
+
+.icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition:
+    background-color 0.3s ease,
+    transform 0.1s ease,
+    box-shadow 0.3s ease;
+}
+
+ion-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: #000;
+}
+
+ion-item.active .icon-wrapper {
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+ion-item:not(.active):hover .icon-wrapper {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+ion-item:active .icon-wrapper {
+  transform: scale(0.95);
+}

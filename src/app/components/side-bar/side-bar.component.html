@@ -1,0 +1,13 @@
+<div class="sideBarContainer">
+  <ion-list lines="none">
+    <ion-item
+      *ngFor="let icon of icons"
+      (click)="setActiveIcon(icon.name)"
+      [class.active]="(activeIcon$ | async) === icon.name"
+    >
+      <div class="icon-wrapper">
+        <ion-icon [src]="icon.src"></ion-icon>
+      </div>
+    </ion-item>
+  </ion-list>
+</div>
