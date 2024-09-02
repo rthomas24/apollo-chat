@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { selectedThread, setActiveTool, signUserIn, storeUserThreads } from './chat.actions';
+import { addNewThread, selectedThread, setActiveTool, signUserIn, storeUserThreads } from './chat.actions';
 import { UserProfile } from '../components/sign-up/sign-up.component';
 
 export const chatFeatureKey = 'chat-key';
@@ -12,7 +12,7 @@ export interface ChatState {
 }
 
 const initialState: ChatState = {
-  currentSelectedTool: 'wikipedia',
+  currentSelectedTool: 'Wikipedia',
   threads: [],
   userProfile: {
     id: '',
@@ -56,10 +56,18 @@ export const chatReducer = createReducer(
       currentSelectedThread: thread,
     };
   }),
+  on(addNewThread, (state: ChatState, { thread }) => {
+    const threads = [thread, ...state.threads]
+    return {
+      ...state,
+      threads,
+    };
+  }),
 );
 
 export interface Threads {
-  id: string;
-  title: string;
-  avatar: string;
+  id: string
+  title: string
+  avatar: string
+  newThread?: boolean
 }

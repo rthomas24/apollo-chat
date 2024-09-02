@@ -13,8 +13,8 @@ export class SideBarComponent {
   public activeIcon$: Observable<string>;
 
   icons = [
-    { name: 'wikipedia', src: 'assets/Wikipedia.svg' },
-    { name: 'youtube', src: 'assets/YouTube.svg' },
+    { name: 'Wikipedia', src: 'assets/Wikipedia.svg' },
+    { name: 'YouTube', src: 'assets/YouTube.svg' },
   ];
 
   constructor(private store: Store) {

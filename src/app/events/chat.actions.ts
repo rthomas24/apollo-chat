@@ -13,7 +13,7 @@ export const signUserIn = createAction(
 );
 
 export const storeUserThreads = createAction(
-  '[Chat] Set user threads',
+  '[Chat] Store user threads',
   props<{ threads: Threads[] }>(),
 );
 
@@ -22,3 +22,7 @@ export const selectedThread = createAction(
   props<{ thread: Threads }>(),
 );
 
+export const addNewThread = createAction(
+  '[Chat] Add new user thread',
+  props<{ thread: Threads }>(),
+);

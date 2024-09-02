@@ -25,7 +25,7 @@ export class ChatInterfaceComponent implements OnInit {
 
   ngOnInit() {
     this.getActiveThread$.pipe(
-      filter((thread): thread is Threads => !!thread?.id),
+      filter((thread): thread is Threads => (!!thread?.id || !!thread.title) && !thread.newThread),
       switchMap((thread) => {
         const userId = this.authService.getUserId();
         if (!userId) {

@@ -12,6 +12,8 @@ import {
   getDocs,
   query,
   where,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 
 @Injectable({
@@ -115,4 +117,52 @@ export class FirestoreService {
       throw error;
     }
   }
+
+  async addNewThreadToUser(userId: string, threadData: Omit<Threads, 'id' | 'content'>): Promise<string> {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+    try {
+      const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
+      const newThreadRef = await addDoc(threadsCollectionRef, {
+        ...threadData,
+        content: []
+      });
+      console.log('New thread added with ID:', newThreadRef.id);
+      return newThreadRef.id;
+    } catch (error) {
+      console.error('Error adding new thread to user:', error);
+      throw error;
+    }
+  }
+
+  async addContentToThread(userId: string, threadId: string, newContent: ChatHistory): Promise<void> {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+    try {
+      const threadRef = doc(this.db, `users/${userId}/threads`, threadId);
+      await updateDoc(threadRef, {
+        content: arrayUnion(newContent)
+      });
+      console.log('Content added to thread successfully');
+    } catch (error) {
+      console.error('Error adding content to thread:', error);
+      throw error;
+    }
+  }
+}
+
+interface Threads {
+  id: string;
+  title: string;
+  avatar: string;
+  content: ChatHistory[];
+}
+
+interface ChatHistory {
+  human: string;
+  ai: string;
 }
