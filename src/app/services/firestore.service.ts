@@ -2,10 +2,20 @@ import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { initializeApp } from 'firebase/app';
 import { environment } from '../../environments/environment';
-import { getFirestore, doc, setDoc, collection, addDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  addDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FirestoreService {
   private db;
@@ -21,11 +31,11 @@ export class FirestoreService {
       throw new Error('User is not authenticated');
     }
     try {
-      const userRef = doc(this.db, "users", userId);
+      const userRef = doc(this.db, 'users', userId);
       await setDoc(userRef, userData, { merge: true });
-      console.log("User data added/updated successfully");
+      console.log('User data added/updated successfully');
     } catch (error) {
-      console.error("Error adding/updating user data:", error);
+      console.error('Error adding/updating user data:', error);
     }
   }
 
@@ -35,11 +45,74 @@ export class FirestoreService {
       throw new Error('User is not authenticated');
     }
     try {
-      const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
+      const threadsCollectionRef = collection(
+        this.db,
+        `users/${userId}/threads`,
+      );
       const docRef = await addDoc(threadsCollectionRef, thread);
-      console.log("Thread added with ID:", docRef.id);
+      console.log('Thread added with ID:', docRef.id);
     } catch (error) {
       console.error("Error adding thread to user's subcollection:", error);
+    }
+  }
+
+  async getThreadById(userId: string, threadId: string): Promise<any> {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+    try {
+      const threadRef = doc(this.db, `users/${userId}/threads`, threadId);
+      const threadDoc = await getDoc(threadRef);
+      if (threadDoc.exists()) {
+        return { id: threadDoc.id, ...threadDoc.data() };
+      } else {
+        console.log('No such thread!');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting thread:', error);
+      throw error;
+    }
+  }
+
+  async getUserThreads(userId: string): Promise<any[]> {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+    try {
+      const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
+      const querySnapshot = await getDocs(threadsCollectionRef);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        title: doc.data()['title'],
+        avatar: doc.data()['avatar']
+      }));
+    } catch (error) {
+      console.error('Error getting user threads:', error);
+      throw error;
+    }
+  }
+
+  async getThreadContent(userId: string, threadId: string): Promise<any[]> {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('User is not authenticated');
+    }
+    try {
+      const threadRef = doc(this.db, `users/${userId}/threads`, threadId);
+      const threadDoc = await getDoc(threadRef);
+      if (threadDoc.exists()) {
+        const data = threadDoc.data();
+        return data['content'] || [];
+      } else {
+        console.log('No such thread!');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error getting thread content:', error);
+      throw error;
     }
   }
 }

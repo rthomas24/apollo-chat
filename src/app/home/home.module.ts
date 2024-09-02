@@ -9,9 +9,17 @@ import { SideBarComponent } from '../components/side-bar/side-bar.component';
 import { ThreadsComponent } from '../components/threads/threads.component';
 import { SignUpComponent } from '../components/sign-up/sign-up.component';
 import { TopBarComponent } from '../components/top-bar/top-bar.component';
+import { ChatInterfaceComponent } from '../components/chat-interface/chat-interface.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
-  declarations: [HomePage, SideBarComponent, ThreadsComponent, SignUpComponent, TopBarComponent],
+  declarations: [
+    HomePage,
+    SideBarComponent,
+    ThreadsComponent,
+    SignUpComponent,
+    TopBarComponent,
+    ChatInterfaceComponent,
+  ],
 })
 export class HomePageModule {}

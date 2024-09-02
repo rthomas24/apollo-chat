@@ -10,7 +10,7 @@ import { selectCurrentSelectedTool } from 'src/app/events/chat.selectors';
   styleUrls: ['./side-bar.component.scss'],
 })
 export class SideBarComponent {
-  public activeIcon$: Observable<string>
+  public activeIcon$: Observable<string>;
 
   icons = [
     { name: 'wikipedia', src: 'assets/Wikipedia.svg' },
@@ -18,11 +18,10 @@ export class SideBarComponent {
   ];
 
   constructor(private store: Store) {
-    this.activeIcon$ = this.store.select(selectCurrentSelectedTool)
+    this.activeIcon$ = this.store.select(selectCurrentSelectedTool);
   }
 
-
   setActiveIcon(iconName: string) {
-    this.store.dispatch(setActiveTool({ tool: iconName}))
+    this.store.dispatch(setActiveTool({ tool: iconName }));
   }
 }

@@ -19,8 +19,13 @@ ion-content {
   height: 100%;
 }
 
-.threads{
+.threads {
   width: 17rem;
+  height: 100%;
+}
+
+.chatInterface {
+  width: 55rem;
   height: 100%;
 }
 
@@ -48,4 +53,13 @@ ion-toolbar {
     --background: #e0e0e0;
     transform: scale(0.95);
   }
+}
+
+.user-display {
+  color: #ffffff;
+  font-weight: 500;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin-right: 16px;
 }

@@ -1,1 +1,22 @@
-<p>chat-interface works!</p>
+<div class="chatContainer">
+    <div class="topBar">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <h2>{{ (getActiveThread$ | async)?.title || 'Chat' }}</h2>
+    </div>
+    <div class="messageContainer">
+      <ng-container *ngFor="let message of chatHistory">
+        <div class="message ai-message" *ngIf="message.ai">
+          <p>{{ message.ai }}</p>
+        </div>
+        <div class="message user-message" *ngIf="message.human">
+          <p>{{ message.human }}</p>
+        </div>
+      </ng-container>
+    </div>
+    <div class="inputContainer">
+      <ion-input placeholder="Type your message..."></ion-input>
+      <ion-button fill="clear">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </div>
+  </div>

@@ -9,8 +9,8 @@ describe('TopBarComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TopBarComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [TopBarComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TopBarComponent);

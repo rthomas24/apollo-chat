@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-
-interface ThreadHistory {
-  id: string;
-  title: string;
-  avatar: string;
-}
+import { Store } from '@ngrx/store';
+import { filter, Observable, take } from 'rxjs';
+import { Threads } from 'src/app/events/chat.reducer';
+import { selectUserThreads } from 'src/app/events/chat.selectors';
+import { selectedThread } from 'src/app/events/chat.actions';
 
 @Component({
   selector: 'app-threads',
@@ -12,34 +11,40 @@ interface ThreadHistory {
   styleUrls: ['./threads.component.scss'],
 })
 export class ThreadsComponent implements OnInit {
-  threads: ThreadHistory[] = [
-    { id: '1', title: 'Wikipedia Thread 1', avatar: 'assets/Wikipedia.svg' },
-    { id: '2', title: 'YouTube Thread 1', avatar: 'assets/YouTube.svg' },
-    { id: '3', title: 'Wikipedia Thread 2', avatar: 'assets/Wikipedia.svg' },
-    { id: '4', title: 'YouTube Thread 2', avatar: 'assets/YouTube.svg' },
-  ];
+  public getThreads$: Observable<Threads[]>;
 
-  filteredThreads: ThreadHistory[] = [];
-  selectedThread: ThreadHistory | null = null;
+  filteredThreads: Threads[] = [];
+  selectedThread: Threads | null = null;
 
-  constructor() {}
-
-  ngOnInit() {
-    this.filteredThreads = this.threads;
-    if (this.threads.length > 0) {
-      this.selectedThread = this.threads[0];
-    }
+  constructor(private store: Store) {
+    this.getThreads$ = this.store.select(selectUserThreads);
   }
 
-  selectThread(thread: ThreadHistory) {
+  ngOnInit() {
+    this.getThreads$.pipe(
+      filter(threads => threads.length > 0),
+      take(1)
+    ).subscribe(threads => {
+      this.filteredThreads = threads;
+      this.selectThread(threads[0]);
+    });
+  }
+
+  selectThread(thread: Threads) {
     this.selectedThread = thread;
+    this.store.dispatch(selectedThread({ thread }));
   }
 
   searchThreads(event: any) {
     const query = event.target.value.toLowerCase();
-    this.filteredThreads = this.threads.filter(thread =>
-      thread.title.toLowerCase().includes(query)
-    );
+    this.getThreads$.pipe(
+      filter(threads => threads.length > 0),
+      take(1)
+    ).subscribe(threads => {
+      this.filteredThreads = threads.filter((thread) =>
+        thread.title.toLowerCase().includes(query)
+      );
+    });
   }
 
   createNewThread() {

@@ -1,6 +1,9 @@
 <ion-toolbar>
   <ion-buttons slot="end">
-    <ion-button (click)="signIn()" class="sign-in-button">Sign In</ion-button>
+    <ion-button *ngIf="!signedIn" (click)="signIn()" class="sign-in-button"
+      >Sign In</ion-button
+    >
+    <div *ngIf="signedIn" class="user-display">{{ displayName }}</div>
   </ion-buttons>
 </ion-toolbar>
 
@@ -10,7 +13,10 @@
       <app-side-bar></app-side-bar>
     </div>
     <div class="threads">
-     <app-threads></app-threads>
+      <app-threads></app-threads>
+    </div>
+    <div class="chatInterface">
+      <app-chat-interface></app-chat-interface>
     </div>
   </div>
 </ion-content>

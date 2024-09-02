@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
@@ -10,55 +10,81 @@ import { FirestoreService } from 'src/app/services/firestore.service';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss'],
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit {
   email: string = '';
   password: string = '';
   isSignUp: boolean = true;
   showPassword: boolean = false;
   isLoading: boolean = false;
+  username = '';
 
   constructor(
     private authService: AuthService,
     private modalCtrl: ModalController,
     private store: Store,
-    private firebaseDbService: FirestoreService
+    private firebaseDbService: FirestoreService,
   ) {}
+
+  ngOnInit() {
+    // Check if user is already logged in
+    const userId = this.authService.getUserId();
+    if (userId) {
+      // Fetch user profile and dispatch to store
+      this.authService.getUserProfile(userId).then((userProfile) => {
+        this.store.dispatch(signUserIn({ user: userProfile }));
+      });
+    }
+  }
 
   async onSubmit() {
     this.isLoading = true;
     try {
-      const authMethod = this.isSignUp ? this.authService.emailSignUp.bind(this.authService) : this.authService.emailSignIn.bind(this.authService);
+      const authMethod = this.isSignUp
+        ? this.authService.emailSignUp.bind(this.authService)
+        : this.authService.emailSignIn.bind(this.authService);
       const user = await authMethod(this.email, this.password);
       const userProfile = {
+        id: user.uid,
         displayName: user.displayName,
         email: user.email,
         emailVerified: user.emailVerified,
         phoneNumber: user.phoneNumber ?? null,
-        refreshToken: user.refreshToken
-      } as UserProfile
+        refreshToken: user.refreshToken,
+        username: this.username,
+      } as UserProfile;
 
       this.store.dispatch(signUserIn({ user: userProfile }));
-      console.log(this.isSignUp ? 'Sign up successful' : 'Sign in successful', user);
+      console.log(
+        this.isSignUp ? 'Sign up successful' : 'Sign in successful',
+        user,
+      );
       this.modalCtrl.dismiss();
 
       const userId = this.authService.getUserId();
       if (userId) {
-        await this.firebaseDbService.addOrUpdateUser(userId, { email: user.email, displayName: user.displayName });
+        await this.firebaseDbService.addOrUpdateUser(userId, {
+          email: user.email,
+          displayName: user.displayName,
+          username: this.username,
+        });
 
-        // const newThread = {
-        //   id: "thread1",
-        //   title: "Sample Thread Title",
-        //   avatar: "https://example.com/avatar.png",
-        //   content: [
-        //     { human: 'hey', ai: 'Hey there' },
-        //     { human: 'how are you', ai: 'im good' }
-        //   ]
-        // };
+        const newThread = {
+          id: 'thread1',
+          title: 'Sample Thread Title',
+          avatar: 'Wikipedia',
+          content: [
+            { human: 'hey', ai: 'Hey there' },
+            { human: 'how are you', ai: 'im good' },
+          ],
+        };
 
-        // await this.firebaseDbService.addThreadToUser(userId, newThread);
+        await this.firebaseDbService.addThreadToUser(userId, newThread);
       }
     } catch (error) {
-      console.error(this.isSignUp ? 'Error signing up:' : 'Error signing in:', error);
+      console.error(
+        this.isSignUp ? 'Error signing up:' : 'Error signing in:',
+        error,
+      );
     } finally {
       this.isLoading = false;
     }
@@ -77,16 +103,19 @@ export class SignUpComponent {
 
       const userId = this.authService.getUserId();
       if (userId) {
-        await this.firebaseDbService.addOrUpdateUser(userId, { email: user.email, displayName: user.displayName });
+        await this.firebaseDbService.addOrUpdateUser(userId, {
+          email: user.email,
+          displayName: user.displayName,
+        });
 
         const newThread = {
-          id: "thread1",
-          title: "Sample Thread Title",
-          avatar: "https://example.com/avatar.png",
+          id: 'thread1',
+          title: 'Sample Thread Title',
+          avatar: 'Youtube',
           content: [
             { human: 'hey', ai: 'Hey there' },
-            { human: 'how are you', ai: 'im good' }
-          ]
+            { human: 'how are you', ai: 'im good' },
+          ],
         };
 
         await this.firebaseDbService.addThreadToUser(userId, newThread);
@@ -104,9 +133,11 @@ export class SignUpComponent {
 }
 
 export interface UserProfile {
-  displayName: string,
-  email: string,
-  emailVerified: boolean,
-  phoneNumber: string | null,
-  refreshToken: string
+  id: string;
+  displayName: string;
+  email: string;
+  emailVerified: boolean;
+  phoneNumber: string | null;
+  refreshToken: string;
+  username: string;
 }
