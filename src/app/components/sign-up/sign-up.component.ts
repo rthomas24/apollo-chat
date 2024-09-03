@@ -69,27 +69,6 @@ export class SignUpComponent implements OnInit {
           username: this.username,
         });
 
-        const newThread = {
-          title: 'Sample Thread Title',
-          avatar: 'Wikipedia',
-          content: [
-            { human: 'hey', ai: 'Hey there' },
-            { human: 'how are you', ai: 'im good' },
-          ],
-          timeStamp: moment().toISOString()
-        };
-        const newThread2 = {
-          title: 'Sample Thread Title2',
-          avatar: 'YouTube',
-          content: [
-            { human: 'this is a test message for number 2', ai: 'Hey there nice on number 3' },
-            { human: 'how are you 2', ai: 'im good how are you 2' },
-          ],
-          timeStamp: moment().add(5, 'minutes').toISOString()
-        };
-
-        await this.firebaseDbService.addThreadToUser(userId, newThread);
-        await this.firebaseDbService.addThreadToUser(userId, newThread2);
       }
     } catch (error) {
       console.error(
@@ -118,18 +97,6 @@ export class SignUpComponent implements OnInit {
           email: user.email,
           displayName: user.displayName,
         });
-
-        const newThread = {
-          title: 'Sample Thread Title',
-          avatar: 'YouTube',
-          content: [
-            { human: 'hey', ai: 'Hey there' },
-            { human: 'how are you', ai: 'im good' },
-          ],
-          timeStamp: moment().toISOString()
-        };
-
-        await this.firebaseDbService.addThreadToUser(userId, newThread);
       }
     } catch (error) {
       console.error('Error signing in with Google:', error);
