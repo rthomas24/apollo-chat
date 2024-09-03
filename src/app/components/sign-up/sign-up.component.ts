@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { signUserIn } from 'src/app/events/chat.actions';
 import { FirestoreService } from 'src/app/services/firestore.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-sign-up',
@@ -75,6 +76,7 @@ export class SignUpComponent implements OnInit {
             { human: 'hey', ai: 'Hey there' },
             { human: 'how are you', ai: 'im good' },
           ],
+          timeStamp: moment().toISOString()
         };
         const newThread2 = {
           title: 'Sample Thread Title2',
@@ -83,6 +85,7 @@ export class SignUpComponent implements OnInit {
             { human: 'this is a test message for number 2', ai: 'Hey there nice on number 3' },
             { human: 'how are you 2', ai: 'im good how are you 2' },
           ],
+          timeStamp: moment().add(5, 'minutes').toISOString()
         };
 
         await this.firebaseDbService.addThreadToUser(userId, newThread);
@@ -123,6 +126,7 @@ export class SignUpComponent implements OnInit {
             { human: 'hey', ai: 'Hey there' },
             { human: 'how are you', ai: 'im good' },
           ],
+          timeStamp: moment().toISOString()
         };
 
         await this.firebaseDbService.addThreadToUser(userId, newThread);

@@ -10,8 +10,6 @@ import {
   addDoc,
   getDoc,
   getDocs,
-  query,
-  where,
   updateDoc,
   arrayUnion,
 } from 'firebase/firestore';
@@ -86,11 +84,15 @@ export class FirestoreService {
     try {
       const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
       const querySnapshot = await getDocs(threadsCollectionRef);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        title: doc.data()['title'],
-        avatar: doc.data()['avatar']
-      }));
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data['title'],
+          avatar: data['avatar'],
+          timeStamp: data['timeStamp']
+        };
+      });
     } catch (error) {
       console.error('Error getting user threads:', error);
       throw error;
@@ -118,7 +120,7 @@ export class FirestoreService {
     }
   }
 
-  async addNewThreadToUser(userId: string, threadData: Omit<Threads, 'id' | 'content'>): Promise<string> {
+  async addNewThreadToUser(userId: string, threadData: Omit<Threads, 'id' | 'content'> & { url: string, documents: any[], timeStamp: string, content: ChatHistory[] }): Promise<string> {
     const token = this.authService.getToken();
     if (!token) {
       throw new Error('User is not authenticated');
@@ -126,8 +128,12 @@ export class FirestoreService {
     try {
       const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
       const newThreadRef = await addDoc(threadsCollectionRef, {
-        ...threadData,
-        content: []
+        title: threadData.title,
+        avatar: threadData.avatar,
+        content: threadData.content ?? [],
+        url: threadData.url,
+        documents: threadData.documents,
+        timeStamp: threadData.timeStamp
       });
       console.log('New thread added with ID:', newThreadRef.id);
       return newThreadRef.id;
