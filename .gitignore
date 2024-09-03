@@ -71,3 +71,6 @@ Thumbs.db
 
 
 /src/environments
+
+.env
+server.js
