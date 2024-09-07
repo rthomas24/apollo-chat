@@ -40,6 +40,7 @@ const initialState: ChatState = {
     title: '',
     avatar: '',
     timeStamp: '',
+    url: ''
   },
   currentChatHistory: [],
 };
@@ -121,4 +122,5 @@ export interface Threads {
   avatar: string;
   timeStamp: string;
   newThread?: boolean;
+  url: string
 }

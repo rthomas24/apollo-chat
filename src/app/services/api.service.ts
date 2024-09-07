@@ -27,21 +27,22 @@ export class ApiService {
       }),
     );
   }
-
-  getThreadDocuments(userId: string, threadId: string): Observable<string> {
-    const url = `${this.apiUrl}/getThreadDocuments/${userId}/${threadId}`;
-    return this.http
-      .get<{ message: string }>(url)
-      .pipe(map((response) => response.message));
+  getThreadDocuments(userId: string, threadId: string, wikiUrl: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/getThreadDocuments/${userId}/${threadId}`, {
+      params: { wikiUrl }
+    }).pipe(
+      map(response => response)
+    );
   }
 
   searchDocuments(
     userId: string,
     threadId: string,
     query: string,
+    wikiUrl: string
   ): Observable<string> {
     const url = `${this.apiUrl}/searchDocuments/${userId}/${threadId}`;
-    return this.http.post<any>(url, { query }).pipe(
+    return this.http.post<any>(url, { query, wikiUrl }).pipe(
       map((response) => {
         return response.response;
       }),

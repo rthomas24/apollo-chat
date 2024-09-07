@@ -99,8 +99,9 @@ export class ApolloEffects {
       switchMap(([action, currentThread, userProfile]) => {
         const userId = userProfile.id;
         const threadId = currentThread.id;
+        const url = currentThread.url;
         return this.apiService
-          .searchDocuments(userId, threadId, action.query)
+          .searchDocuments(userId, threadId, action.query, url)
           .pipe(
             map((aiResponse: string) => searchDocumentsSuccess({ aiResponse })),
             catchError((error) =>
@@ -114,8 +115,9 @@ export class ApolloEffects {
   getThreadDocuments$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getThreadDocuments),
-      switchMap(({ userId, threadId }) =>
-        this.apiService.getThreadDocuments(userId, threadId).pipe(
+      withLatestFrom(this.store.select(selectCurrentThread)),
+      switchMap(([{ userId, threadId }, currentThread]) =>
+        this.apiService.getThreadDocuments(userId, threadId, currentThread.url).pipe(
           map((message) => getThreadDocumentsSuccess({ message })),
           catchError((error) => of(getThreadDocumentsError({ error }))),
         ),

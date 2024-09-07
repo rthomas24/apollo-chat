@@ -94,6 +94,7 @@ export class FirestoreService {
           title: data['title'],
           avatar: data['avatar'],
           timeStamp: data['timeStamp'],
+          url: data['url']
         };
       });
     } catch (error) {

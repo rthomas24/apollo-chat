@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { filter, Observable, take, switchMap, of, delay } from 'rxjs';
+import { filter, Observable, take } from 'rxjs';
 import { Threads } from 'src/app/events/chat.reducer';
 import {
   selectCurrentSelectedTool,
@@ -22,7 +22,7 @@ import * as moment from 'moment';
 export class ThreadsComponent implements OnInit {
   public getThreads$: Observable<Threads[]>;
   public selectedTool$: Observable<string>;
-  public userProfile$: Observable<any>; // Add this line
+  public userProfile$: Observable<any>;
 
   filteredThreads: Threads[] = [];
   selectedThread: Threads | null = null;
@@ -30,7 +30,7 @@ export class ThreadsComponent implements OnInit {
   constructor(private store: Store) {
     this.getThreads$ = this.store.select(selectUserThreads);
     this.selectedTool$ = this.store.select(selectCurrentSelectedTool);
-    this.userProfile$ = this.store.select(selectUserProfile); // Add this line
+    this.userProfile$ = this.store.select(selectUserProfile);
   }
 
   ngOnInit() {
@@ -55,22 +55,18 @@ export class ThreadsComponent implements OnInit {
       .pipe(
         filter((profile) => !!profile && !!profile.id),
         take(1),
-        delay(2500),
-        switchMap((profile) => {
-          if (profile && profile.id && thread.id) {
-            this.store.dispatch(
-              getThreadDocuments({ userId: profile.id, threadId: thread.id }),
-            );
-            return of(true);
-          } else {
-            console.error(
-              'Unable to get thread documents: missing userId or threadId',
-            );
-            return of(false);
-          }
-        }),
       )
-      .subscribe();
+      .subscribe((profile) => {
+        if (profile && profile.id && thread.id) {
+          this.store.dispatch(
+            getThreadDocuments({ userId: profile.id, threadId: thread.id }),
+          );
+        } else {
+          console.error(
+            'Unable to get thread documents: missing userId or threadId',
+          );
+        }
+      });
   }
 
   searchThreads(event: any) {
