@@ -48,11 +48,36 @@ export class ApiService {
       }),
     );
   }
+
+  getYoutubeInfo(url: string): Observable<YoutubeResults> {
+    const apiUrl = `${this.apiUrl}/getYoutubeInfo`;
+    return this.http.post<any>(apiUrl, { url }).pipe(
+      map((response) => {
+        return {
+          title: response.youtubeResult.title,
+          description: response.youtubeResult.description,
+          viewCount: response.youtubeResult.view_count,
+          uploadDate: response.youtubeResult.upload_date,
+          content: response.processedContent,
+          summary: response.summary,
+        } as YoutubeResults;
+      }),
+    );
+  }
 }
 
 export interface WikipediaResults {
   title: string;
   url: string;
   content: Array<any>;
+  summary: string;
+}
+
+export interface YoutubeResults {
+  title: string;
+  description: string;
+  viewCount: number;
+  uploadDate: string;
+  content: string[];
   summary: string;
 }

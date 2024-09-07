@@ -78,3 +78,16 @@ export const loadChatHistory = createAction(
   '[Chat] Load Chat History',
   props<{ chatHistory: ChatHistory[] }>(),
 );
+
+export const getYoutubeInfo = createAction(
+  '[Chat] Get Youtube Info',
+  props<{ url: string }>(),
+);
+export const getYoutubeInfoSuccess = createAction(
+  '[Chat] Get Youtube Info Success',
+  props<{ response: any, threadId: string }>(),
+);
+export const getYoutubeInfoError = createAction(
+  '[Chat] Get Youtube Info Error',
+  props<{ error: Error }>(),
+);

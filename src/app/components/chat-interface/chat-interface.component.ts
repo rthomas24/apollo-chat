@@ -14,6 +14,7 @@ import {
 import { AuthService } from 'src/app/services/auth.service';
 import {
   getWikipediaInfo,
+  getYoutubeInfo,
   loadChatHistory,
   searchDocuments,
 } from 'src/app/events/chat.actions';
@@ -71,7 +72,14 @@ export class ChatInterfaceComponent implements OnInit {
   }
 
   startNewThread() {
-    this.store.dispatch(getWikipediaInfo({ topic: this.newThreadInput }));
+    if (this.currentTool === 'Wikipedia') {
+      this.store.dispatch(getWikipediaInfo({ topic: this.newThreadInput }));
+    } else if (this.currentTool === 'YouTube') {
+      this.store.dispatch(getYoutubeInfo({ url: this.newThreadInput }));
+    } else {
+      console.warn(`Unsupported tool: ${this.currentTool}`);
+    }
+    this.newThreadInput = '';
   }
 
   sendMessage() {

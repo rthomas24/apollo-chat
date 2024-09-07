@@ -19,8 +19,11 @@ import {
   getThreadDocuments,
   getThreadDocumentsSuccess,
   getThreadDocumentsError,
+  getYoutubeInfo,
+  getYoutubeInfoSuccess,
+  getYoutubeInfoError,
 } from './chat.actions';
-import { ApiService, WikipediaResults } from '../services/api.service';
+import { ApiService, WikipediaResults, YoutubeResults } from '../services/api.service';
 import { FirestoreService } from '../services/firestore.service';
 import { AuthService } from '../services/auth.service';
 import * as moment from 'moment';
@@ -122,6 +125,57 @@ export class ApolloEffects {
           catchError((error) => of(getThreadDocumentsError({ error }))),
         ),
       ),
+    ),
+  );
+
+  getYoutubeInfo$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getYoutubeInfo),
+      switchMap(({ url }) =>
+        this.apiService.getYoutubeInfo(url).pipe(
+          mergeMap((response: YoutubeResults) => {
+            const userId = this.authService.getUserId();
+            if (!userId) {
+              throw new Error('User is not authenticated');
+            }
+            const summary = response.summary;
+            return from(
+              this.firestoreService.addNewThreadToUser(userId, {
+                title: response.title,
+                avatar: 'YouTube',
+                url: url,
+                content: [{ ai: summary, human: `YouTube video: ${response.title}` }],
+                documents: response.content,
+                timeStamp: moment().toISOString(),
+              }),
+            ).pipe(
+              map((threadId) =>
+                getYoutubeInfoSuccess({ response, threadId }),
+              ),
+            );
+          }),
+          catchError((error) => {
+            console.error('Error in getYoutubeInfo effect:', error);
+            return of(getYoutubeInfoError({ error: error.toString() }));
+          }),
+        ),
+      ),
+    ),
+  );
+
+  updateYotubeThreads$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getYoutubeInfoSuccess),
+      switchMap(() => {
+        const userId = this.authService.getUserId();
+        if (!userId) {
+          throw new Error('User is not authenticated');
+        }
+        return from(this.firestoreService.getUserThreads(userId)).pipe(
+          map((threads) => storeUserThreads({ threads })),
+          catchError((error) => of()),
+        );
+      }),
     ),
   );
 }
