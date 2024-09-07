@@ -1,7 +1,17 @@
 import { createReducer, on } from '@ngrx/store';
-import { addNewThread, getWikipediaInfoSuccess, selectedThread, setActiveTool, signUserIn, storeUserThreads } from './chat.actions';
+import {
+  addNewThread,
+  loadChatHistory,
+  searchDocuments,
+  searchDocumentsSuccess,
+  selectedThread,
+  setActiveTool,
+  signUserIn,
+  storeUserThreads,
+} from './chat.actions';
 import { UserProfile } from '../components/sign-up/sign-up.component';
 import * as moment from 'moment';
+import { ChatHistory } from '../services/firestore.service';
 
 export const chatFeatureKey = 'chat-key';
 
@@ -9,7 +19,8 @@ export interface ChatState {
   currentSelectedTool: string;
   threads: Threads[];
   userProfile: UserProfile;
-  currentSelectedThread: Threads
+  currentSelectedThread: Threads;
+  currentChatHistory: ChatHistory[];
 }
 
 const initialState: ChatState = {
@@ -25,11 +36,12 @@ const initialState: ChatState = {
     username: '',
   },
   currentSelectedThread: {
-      id: '',
-      title: '',
-      avatar: '',
-      timeStamp: ''
-  }
+    id: '',
+    title: '',
+    avatar: '',
+    timeStamp: '',
+  },
+  currentChatHistory: [],
 };
 
 export const chatReducer = createReducer(
@@ -47,7 +59,9 @@ export const chatReducer = createReducer(
     };
   }),
   on(storeUserThreads, (state: ChatState, { threads }) => {
-    const sortedThreads = [...threads].sort((a, b) => moment(b.timeStamp).valueOf() - moment(a.timeStamp).valueOf());
+    const sortedThreads = [...threads].sort(
+      (a, b) => moment(b.timeStamp).valueOf() - moment(a.timeStamp).valueOf(),
+    );
     return {
       ...state,
       threads: sortedThreads,
@@ -61,18 +75,50 @@ export const chatReducer = createReducer(
     };
   }),
   on(addNewThread, (state: ChatState, { thread }) => {
-    const threads = [thread, ...state.threads]
+    const threads = [thread, ...state.threads];
     return {
       ...state,
       threads,
     };
   }),
+  on(loadChatHistory, (state: ChatState, { chatHistory }) => {
+    return {
+      ...state,
+      currentChatHistory: chatHistory,
+    };
+  }),
+  on(searchDocuments, (state: ChatState, { query }) => {
+    const newChatHistoryEntry = {
+      human: query,
+      ai: '',
+    };
+
+    return {
+      ...state,
+      currentChatHistory: [...state.currentChatHistory, newChatHistoryEntry],
+    };
+  }),
+  on(searchDocumentsSuccess, (state: ChatState, { aiResponse }) => {
+    const updatedChatHistory = [...state.currentChatHistory];
+    if (updatedChatHistory.length > 0) {
+      const lastMessageIndex = updatedChatHistory.length - 1;
+      const lastMessage = { ...updatedChatHistory[lastMessageIndex] };
+      if (lastMessage.human) {
+        lastMessage.ai += aiResponse;
+        updatedChatHistory[lastMessageIndex] = lastMessage;
+      }
+    }
+    return {
+      ...state,
+      currentChatHistory: updatedChatHistory,
+    };
+  }),
 );
 
 export interface Threads {
-  id: string
-  title: string
-  avatar: string
-  timeStamp: string
-  newThread?: boolean
+  id: string;
+  title: string;
+  avatar: string;
+  timeStamp: string;
+  newThread?: boolean;
 }

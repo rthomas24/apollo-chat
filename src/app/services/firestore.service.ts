@@ -82,15 +82,18 @@ export class FirestoreService {
       throw new Error('User is not authenticated');
     }
     try {
-      const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
+      const threadsCollectionRef = collection(
+        this.db,
+        `users/${userId}/threads`,
+      );
       const querySnapshot = await getDocs(threadsCollectionRef);
-      return querySnapshot.docs.map(doc => {
+      return querySnapshot.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
           title: data['title'],
           avatar: data['avatar'],
-          timeStamp: data['timeStamp']
+          timeStamp: data['timeStamp'],
         };
       });
     } catch (error) {
@@ -120,20 +123,31 @@ export class FirestoreService {
     }
   }
 
-  async addNewThreadToUser(userId: string, threadData: Omit<Threads, 'id' | 'content'> & { url: string, documents: any[], timeStamp: string, content: ChatHistory[] }): Promise<string> {
+  async addNewThreadToUser(
+    userId: string,
+    threadData: Omit<Threads, 'id' | 'content'> & {
+      url: string;
+      documents: any[];
+      timeStamp: string;
+      content: ChatHistory[];
+    },
+  ): Promise<string> {
     const token = this.authService.getToken();
     if (!token) {
       throw new Error('User is not authenticated');
     }
     try {
-      const threadsCollectionRef = collection(this.db, `users/${userId}/threads`);
+      const threadsCollectionRef = collection(
+        this.db,
+        `users/${userId}/threads`,
+      );
       const newThreadRef = await addDoc(threadsCollectionRef, {
         title: threadData.title,
         avatar: threadData.avatar,
         content: threadData.content ?? [],
         url: threadData.url,
         documents: threadData.documents,
-        timeStamp: threadData.timeStamp
+        timeStamp: threadData.timeStamp,
       });
       console.log('New thread added with ID:', newThreadRef.id);
       return newThreadRef.id;
@@ -143,7 +157,11 @@ export class FirestoreService {
     }
   }
 
-  async addContentToThread(userId: string, threadId: string, newContent: ChatHistory): Promise<void> {
+  async addContentToThread(
+    userId: string,
+    threadId: string,
+    newContent: ChatHistory,
+  ): Promise<void> {
     const token = this.authService.getToken();
     if (!token) {
       throw new Error('User is not authenticated');
@@ -151,7 +169,7 @@ export class FirestoreService {
     try {
       const threadRef = doc(this.db, `users/${userId}/threads`, threadId);
       await updateDoc(threadRef, {
-        content: arrayUnion(newContent)
+        content: arrayUnion(newContent),
       });
       console.log('Content added to thread successfully');
     } catch (error) {
@@ -168,7 +186,7 @@ interface Threads {
   content: ChatHistory[];
 }
 
-interface ChatHistory {
+export interface ChatHistory {
   human: string;
   ai: string;
 }

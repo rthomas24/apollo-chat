@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { UserProfile } from '../components/sign-up/sign-up.component';
 import { Threads } from './chat.reducer';
 import { WikipediaResults } from '../services/api.service';
+import { ChatHistory } from '../services/firestore.service';
 
 export const setActiveTool = createAction(
   '[Chat] Set Current active tool',
@@ -41,4 +42,39 @@ export const getWikipediaInfoSuccess = createAction(
 export const getWikipediaInfoError = createAction(
   '[Chat] Get Wikipedia info Error',
   props<{ error: Error }>(),
+);
+
+export const searchDocuments = createAction(
+  '[Chat] Search Documents',
+  props<{ query: string }>(),
+);
+
+export const searchDocumentsSuccess = createAction(
+  '[Chat] Search Documents Success',
+  props<{ aiResponse: string }>(),
+);
+
+export const searchDocumentsError = createAction(
+  '[Chat] Search Documents Error',
+  props<{ error: any }>(),
+);
+
+export const getThreadDocuments = createAction(
+  '[Chat] Get Thread Documents',
+  props<{ userId: string; threadId: string }>(),
+);
+
+export const getThreadDocumentsSuccess = createAction(
+  '[Chat] Get Thread Documents Success',
+  props<{ message: string }>(),
+);
+
+export const getThreadDocumentsError = createAction(
+  '[Chat] Get Thread Documents Error',
+  props<{ error: any }>(),
+);
+
+export const loadChatHistory = createAction(
+  '[Chat] Load Chat History',
+  props<{ chatHistory: ChatHistory[] }>(),
 );

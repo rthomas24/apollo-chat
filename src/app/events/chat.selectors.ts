@@ -23,3 +23,7 @@ export const selectCurrentThread = createSelector(
   (state: ChatState) => state.currentSelectedThread,
 );
 
+export const selectChatHistory = createSelector(
+  chatDataState,
+  (state: ChatState) => state.currentChatHistory,
+);

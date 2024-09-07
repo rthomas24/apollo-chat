@@ -17,20 +17,20 @@
             />
           </ion-item>
           <!-- <ng-container *ngIf="getThreads$ | async as threads"> -->
-            <ion-item
-              *ngFor="let thread of filteredThreads"
-              (click)="selectThread(thread)"
-              [class.selected]="thread === selectedThread"
-            >
-              <div class="avatar-container" slot="start">
-                <img
-                  [src]="'assets/' + thread.avatar + '.svg'"
-                  alt="Thread avatar"
-                  class="thread-icon"
-                />
-              </div>
-              <ion-label>{{ thread.title }}</ion-label>
-            </ion-item>
+          <ion-item
+            *ngFor="let thread of filteredThreads"
+            (click)="selectThread(thread)"
+            [class.selected]="thread === selectedThread"
+          >
+            <div class="avatar-container" slot="start">
+              <img
+                [src]="'assets/' + thread.avatar + '.svg'"
+                alt="Thread avatar"
+                class="thread-icon"
+              />
+            </div>
+            <ion-label>{{ thread.title }}</ion-label>
+          </ion-item>
           <!-- </ng-container> -->
         </ion-list>
       </ion-col>

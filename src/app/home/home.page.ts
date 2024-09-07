@@ -24,7 +24,7 @@ export class HomePage implements OnInit {
   constructor(
     private modalController: ModalController,
     private store: Store,
-    private fireStore: FirestoreService
+    private fireStore: FirestoreService,
   ) {
     this.profile$ = this.store.select(selectUserProfile);
   }
@@ -38,15 +38,15 @@ export class HomePage implements OnInit {
             profile.displayName || profile.username || profile.email;
           this.signedIn = true;
           return from(this.fireStore.getUserThreads(profile.id));
-        })
+        }),
       )
       .subscribe({
         next: (threads: Threads[]) => {
-          this.store.dispatch(storeUserThreads({ threads }))
+          this.store.dispatch(storeUserThreads({ threads }));
         },
         error: (error) => {
           console.error('Error fetching user threads:', error);
-        }
+        },
       });
   }
 

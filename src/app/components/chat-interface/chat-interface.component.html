@@ -1,34 +1,43 @@
 <div class="chatContainer">
-    <div class="topBar">
-      <ion-icon name="chatbubbles-outline"></ion-icon>
-      <h2>{{ (getActiveThread$ | async)?.title || 'Chat' }}</h2>
-    </div>
-    <div class="messageContainer" *ngIf="!isNewThread">
-      <ng-container *ngFor="let message of chatHistory">
-        <div class="message ai-message" *ngIf="message.ai">
-          <p>{{ message.ai }}</p>
-        </div>
-        <div class="message user-message" *ngIf="message.human">
-          <p>{{ message.human }}</p>
-        </div>
-      </ng-container>
-    </div>
-    <div class="newThreadContainer" *ngIf="isNewThread">
-      <div class="newThreadContent">
-        <h3>Start a new conversation</h3>
-        <p *ngIf="currentTool === 'Wikipedia'">Enter a Wikipedia topic to start:</p>
-        <p *ngIf="currentTool === 'YouTube'">Enter a YouTube link to start:</p>
-        <ion-input 
-          [(ngModel)]="newThreadInput" 
-          [placeholder]="currentTool === 'Wikipedia' ? 'Enter topic...' : 'Enter YouTube link...'"
-        ></ion-input>
-        <ion-button (click)="startNewThread()">Start Conversation</ion-button>
+  <div class="topBar">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <h2>{{ (getActiveThread$ | async)?.title || "Chat" }}</h2>
+  </div>
+  <div class="messageContainer" *ngIf="!isNewThread">
+    <ng-container *ngFor="let message of chatHistory$ | async">
+      <div class="message user-message" *ngIf="message.human">
+        <p>{{ message.human }}</p>
       </div>
-    </div>
-    <div class="inputContainer" *ngIf="!isNewThread">
-      <ion-input placeholder="Type your message..."></ion-input>
-      <ion-button fill="clear">
-        <ion-icon name="send"></ion-icon>
-      </ion-button>
+      <div class="message ai-message" *ngIf="message.ai">
+        <p>{{ message.ai }}</p>
+      </div>
+    </ng-container>
+  </div>
+  <div class="newThreadContainer" *ngIf="isNewThread">
+    <div class="newThreadContent">
+      <h3>Start a new conversation</h3>
+      <p *ngIf="currentTool === 'Wikipedia'">
+        Enter a Wikipedia topic to start:
+      </p>
+      <p *ngIf="currentTool === 'YouTube'">Enter a YouTube link to start:</p>
+      <ion-input
+        [(ngModel)]="newThreadInput"
+        [placeholder]="
+          currentTool === 'Wikipedia'
+            ? 'Enter topic...'
+            : 'Enter YouTube link...'
+        "
+      ></ion-input>
+      <ion-button (click)="startNewThread()">Start Conversation</ion-button>
     </div>
   </div>
+  <div class="inputContainer" *ngIf="!isNewThread">
+    <ion-input
+      [(ngModel)]="userInput"
+      placeholder="Type your message..."
+    ></ion-input>
+    <ion-button fill="clear" (click)="sendMessage()">
+      <ion-icon name="send"></ion-icon>
+    </ion-button>
+  </div>
+</div>

@@ -68,7 +68,6 @@ export class SignUpComponent implements OnInit {
           displayName: user.displayName,
           username: this.username,
         });
-
       }
     } catch (error) {
       console.error(
