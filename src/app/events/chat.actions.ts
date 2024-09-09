@@ -91,3 +91,8 @@ export const getYoutubeInfoError = createAction(
   '[Chat] Get Youtube Info Error',
   props<{ error: Error }>(),
 );
+
+export const processingState = createAction(
+  '[Chat] Update Processing State',
+  props<{ processing: boolean }>(),
+);

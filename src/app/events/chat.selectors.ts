@@ -27,3 +27,8 @@ export const selectChatHistory = createSelector(
   chatDataState,
   (state: ChatState) => state.currentChatHistory,
 );
+
+export const processingStatus = createSelector(
+  chatDataState,
+  (state: ChatState) => state.currentlyProcessing,
+);

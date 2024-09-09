@@ -6,6 +6,7 @@ import {
   selectCurrentThread,
   selectCurrentSelectedTool,
   selectChatHistory,
+  processingStatus,
 } from 'src/app/events/chat.selectors';
 import {
   ChatHistory,
@@ -16,6 +17,7 @@ import {
   getWikipediaInfo,
   getYoutubeInfo,
   loadChatHistory,
+  processingState,
   searchDocuments,
 } from 'src/app/events/chat.actions';
 
@@ -28,6 +30,7 @@ export class ChatInterfaceComponent implements OnInit {
   public getActiveThread$: Observable<Threads>;
   public currentTool$: Observable<string>;
   public chatHistory$: Observable<ChatHistory[]>;
+  public processingState$: Observable<boolean>;
   public isNewThread: boolean = false;
   public currentTool: string = '';
   public newThreadInput: string = '';
@@ -41,6 +44,7 @@ export class ChatInterfaceComponent implements OnInit {
     this.getActiveThread$ = this.store.select(selectCurrentThread);
     this.currentTool$ = this.store.select(selectCurrentSelectedTool);
     this.chatHistory$ = this.store.select(selectChatHistory);
+    this.processingState$ = this.store.select(processingStatus);
   }
 
   ngOnInit() {
@@ -79,6 +83,7 @@ export class ChatInterfaceComponent implements OnInit {
     } else {
       console.warn(`Unsupported tool: ${this.currentTool}`);
     }
+    this.store.dispatch(processingState({ processing: true }))
     this.newThreadInput = '';
   }
 

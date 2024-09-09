@@ -2,6 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import {
   addNewThread,
   loadChatHistory,
+  processingState,
   searchDocuments,
   searchDocumentsSuccess,
   selectedThread,
@@ -21,6 +22,7 @@ export interface ChatState {
   userProfile: UserProfile;
   currentSelectedThread: Threads;
   currentChatHistory: ChatHistory[];
+  currentlyProcessing: boolean
 }
 
 const initialState: ChatState = {
@@ -43,6 +45,7 @@ const initialState: ChatState = {
     url: ''
   },
   currentChatHistory: [],
+  currentlyProcessing: false
 };
 
 export const chatReducer = createReducer(
@@ -112,6 +115,12 @@ export const chatReducer = createReducer(
     return {
       ...state,
       currentChatHistory: updatedChatHistory,
+    };
+  }),
+  on(processingState, (state: ChatState, { processing }) => {
+    return {
+      ...state,
+      currentlyProcessing: processing,
     };
   }),
 );

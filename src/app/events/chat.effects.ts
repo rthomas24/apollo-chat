@@ -22,6 +22,7 @@ import {
   getYoutubeInfo,
   getYoutubeInfoSuccess,
   getYoutubeInfoError,
+  processingState,
 } from './chat.actions';
 import { ApiService, WikipediaResults, YoutubeResults } from '../services/api.service';
 import { FirestoreService } from '../services/firestore.service';
@@ -62,13 +63,15 @@ export class ApolloEffects {
                 timeStamp: moment().toISOString(),
               }),
             ).pipe(
-              map((threadId) =>
+              mergeMap((threadId) => [
                 getWikipediaInfoSuccess({ response, threadId }),
-              ),
+                processingState({ processing: false }),
+              ]),
             );
           }),
           catchError((error) => {
             console.log(error);
+            this.store.dispatch(processingState({ processing: false }));
             return of(getWikipediaInfoError({ error: error.toString() }));
           }),
         ),
@@ -149,13 +152,15 @@ export class ApolloEffects {
                 timeStamp: moment().toISOString(),
               }),
             ).pipe(
-              map((threadId) =>
+              mergeMap((threadId) => [
                 getYoutubeInfoSuccess({ response, threadId }),
-              ),
+                processingState({ processing: false }),
+              ]),
             );
           }),
           catchError((error) => {
             console.error('Error in getYoutubeInfo effect:', error);
+            this.store.dispatch(processingState({ processing: false }));
             return of(getYoutubeInfoError({ error: error.toString() }));
           }),
         ),
