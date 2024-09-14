@@ -3,15 +3,68 @@
     <ion-icon name="chatbubbles-outline"></ion-icon>
     <h2>{{ (getActiveThread$ | async)?.title || "Chat" }}</h2>
   </div>
-  <div class="messageContainer" *ngIf="!isNewThread">
-    <ng-container *ngFor="let message of chatHistory$ | async">
-      <div class="message user-message" *ngIf="message.human">
-        <p>{{ message.human }}</p>
-      </div>
-      <div class="message ai-message" *ngIf="message.ai">
-        <p>{{ message.ai }}</p>
-      </div>
-    </ng-container>
+  <div class="scrollableContent" *ngIf="!isNewThread">
+    <div class="messageContainer">
+      <ng-container *ngFor="let message of chatHistory$ | async">
+        <div class="message user-message" *ngIf="message.human">
+          <p>{{ message.human }}</p>
+        </div>
+        <div class="message ai-message" *ngIf="message.ai">
+          <p>{{ message.ai }}</p>
+        </div>
+      </ng-container>
+    </div>
+    <div class="videoInfo" *ngIf="currentVideoInfo$ | async as videoInfo">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Video Information</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item lines="none">
+            <ion-label>
+              <strong>Title:</strong> {{ videoInfo.title }}
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <strong>Description:</strong> {{ videoInfo.description }}
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <strong>View Count:</strong> {{ videoInfo.viewCount }}
+            </ion-label>
+          </ion-item>
+          <div *ngIf="videoInfo.summary && videoInfo.summary.length > 0">
+            <ion-list-header>
+              <ion-label>Summary</ion-label>
+            </ion-list-header>
+            <ion-list>
+              <ng-container *ngFor="let item of videoInfo.summary">
+                <ion-item>
+                  <ion-label>
+                    <h2>{{ item.type }}</h2>
+                  </ion-label>
+                </ion-item>
+                <ion-item *ngFor="let takeaway of item.args.keyTakeaways" lines="none">
+                  <ion-icon name="checkmark-circle" slot="start" color="primary"></ion-icon>
+                  <ion-label text-wrap>{{ takeaway }}</ion-label>
+                </ion-item>
+              </ng-container>
+            </ion-list>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+  <div class="inputContainer" *ngIf="!isNewThread">
+    <ion-input
+      [(ngModel)]="userInput"
+      placeholder="Type your message..."
+    ></ion-input>
+    <ion-button fill="clear" (click)="sendMessage()">
+      <ion-icon name="send"></ion-icon>
+    </ion-button>
   </div>
   <div class="newThreadContainer" *ngIf="isNewThread">
     <div class="newThreadContent">
@@ -30,15 +83,6 @@
       ></ion-input>
       <ion-button (click)="startNewThread()">Start Conversation</ion-button>
     </div>
-  </div>
-  <div class="inputContainer" *ngIf="!isNewThread">
-    <ion-input
-      [(ngModel)]="userInput"
-      placeholder="Type your message..."
-    ></ion-input>
-    <ion-button fill="clear" (click)="sendMessage()">
-      <ion-icon name="send"></ion-icon>
-    </ion-button>
   </div>
   <div class="spinner-overlay" *ngIf="processingState$ | async">
     <ion-spinner name="crescent"></ion-spinner>

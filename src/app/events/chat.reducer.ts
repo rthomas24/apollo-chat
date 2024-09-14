@@ -9,6 +9,7 @@ import {
   setActiveTool,
   signUserIn,
   storeUserThreads,
+  getYoutubeInfoSuccess,
 } from './chat.actions';
 import { UserProfile } from '../components/sign-up/sign-up.component';
 import * as moment from 'moment';
@@ -22,7 +23,15 @@ export interface ChatState {
   userProfile: UserProfile;
   currentSelectedThread: Threads;
   currentChatHistory: ChatHistory[];
-  currentlyProcessing: boolean
+  currentlyProcessing: boolean;
+  currentVideoInfo: YoutubeInfo | null;
+}
+
+export interface YoutubeInfo {
+  title: string;
+  description: string;
+  viewCount: number;
+  summary: any[];
 }
 
 const initialState: ChatState = {
@@ -45,7 +54,8 @@ const initialState: ChatState = {
     url: ''
   },
   currentChatHistory: [],
-  currentlyProcessing: false
+  currentlyProcessing: false,
+  currentVideoInfo: null,
 };
 
 export const chatReducer = createReducer(
@@ -121,6 +131,27 @@ export const chatReducer = createReducer(
     return {
       ...state,
       currentlyProcessing: processing,
+    };
+  }),
+  on(getYoutubeInfoSuccess, (state: ChatState, { response }) => {
+    const updatedChatHistory = [...state.currentChatHistory];
+    if (updatedChatHistory.length > 0) {
+      const lastMessageIndex = updatedChatHistory.length - 1;
+      const lastMessage = { ...updatedChatHistory[lastMessageIndex] };
+      if (lastMessage.ai) {
+        lastMessage.ai += `\n\nVideo Information:\nTitle: ${response.title}\nDescription: ${response.description}\nView Count: ${response.viewCount}`;
+        updatedChatHistory[lastMessageIndex] = lastMessage;
+      }
+    }
+    return {
+      ...state,
+      currentChatHistory: updatedChatHistory,
+      currentVideoInfo: {
+        title: response.title,
+        description: response.description,
+        viewCount: response.viewCount,
+        summary: response.summary,
+      },
     };
   }),
 );

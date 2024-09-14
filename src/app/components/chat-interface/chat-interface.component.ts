@@ -7,6 +7,7 @@ import {
   selectCurrentSelectedTool,
   selectChatHistory,
   processingStatus,
+  selectCurrentVideoInfo,
 } from 'src/app/events/chat.selectors';
 import {
   ChatHistory,
@@ -20,6 +21,7 @@ import {
   processingState,
   searchDocuments,
 } from 'src/app/events/chat.actions';
+import { YoutubeInfo } from 'src/app/events/chat.reducer';
 
 @Component({
   selector: 'app-chat-interface',
@@ -35,6 +37,7 @@ export class ChatInterfaceComponent implements OnInit {
   public currentTool: string = '';
   public newThreadInput: string = '';
   public userInput: string = '';
+  public currentVideoInfo$: Observable<YoutubeInfo | null>;
 
   constructor(
     private store: Store,
@@ -45,6 +48,7 @@ export class ChatInterfaceComponent implements OnInit {
     this.currentTool$ = this.store.select(selectCurrentSelectedTool);
     this.chatHistory$ = this.store.select(selectChatHistory);
     this.processingState$ = this.store.select(processingStatus);
+    this.currentVideoInfo$ = this.store.select(selectCurrentVideoInfo);
   }
 
   ngOnInit() {

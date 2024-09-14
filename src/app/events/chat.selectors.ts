@@ -32,3 +32,8 @@ export const processingStatus = createSelector(
   chatDataState,
   (state: ChatState) => state.currentlyProcessing,
 );
+
+export const selectCurrentVideoInfo = createSelector(
+  chatDataState,
+  (state: ChatState) => state.currentVideoInfo
+);
